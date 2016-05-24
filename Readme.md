@@ -93,7 +93,9 @@ Open `www/js/app.js` and we'll add the following code to the end of the file:
 
 The first state is an abstract state called `app`, it's an abstract state that will contain our menu (`templates/menu.html`). The second state is `app.main`, a child state of `app`. To get to the main state you can navigate to `/app/main`.
 
-The `templateUrl` is the path to the template (html) files that contain the content for the menu and main page respectively. We'll create thos in the next step.
+`templateUrl` is the path to the template (html) files that contain the content for the menu and main page respectively. We'll create those in the next step.
+
+In the state `'app.main'` we explicitly say that the template `'templates/main.html'` will be rendered inside of `'menuContent'`. For this to work `<ion-nav-view name="menuContent"></ion-nav-view>` has to be defined within `'templates/menu.html'`.
 
 The final line tells the app that if it reaches a state (URL) that is not explicitely mapped by `$stateProvider` to redirect to `/app/main`.
 
@@ -113,7 +115,7 @@ Create the main page template `wikiApp/www/templates/main.html` and fill it with
 </ion-view>
 ```
 
-`<ion-view view-title="Main">` tells Ionic to put a title in the top bar that says "Main". `ion-view` and `ion-content` are needed for pages to scroll properly.
+`<ion-view view-title="Main">` tells Ionic to put a title, "Main", in the top nav bar. `<ion-view ...>` and `<ion-content>` are needed for pages to scroll properly - they're basically `<div>`'s on steroids.
 
 #### Creating a menu
 
@@ -131,6 +133,8 @@ Now create the menu template `wikiApp/www/templates/menu.html` and copy and past
         </button>
       </ion-nav-buttons>
     </ion-nav-bar>
+    
+    <!-- "menuContent" is where ionic puts the content, see app.js -->
     <ion-nav-view name="menuContent"></ion-nav-view>
   </ion-side-menu-content>
 
@@ -157,7 +161,7 @@ Your app now has a main page, a navigation bar and a side menu. If it doesn't pl
 
 ### Adding controllers
 
-Now that we have a couple templates and states we can add controllers. Controllers are where we put JavaScript/logic that is associated with each template. We'll have to update the states to tell Ionic that the `app.main` state is paired with a specific controller `MainCtrl`.
+Now that we have a couple templates and states we can add controllers. Controllers are where we put JavaScript-based logic that is associated with each template. We'll have to update the states to tell Ionic that the `app.main` state is paired with a specific controller `MainCtrl`.
 
 In `app.js` update the `views` object in the `app.main` state to look like:
 
@@ -202,7 +206,7 @@ angular.module('starter', ['ionic', 'starter.controllers'])
 
 ## Showing topics on our main screen
 
-In our `MainCtrl` we're going to create an array attached to the `$scope` variable that we can access within `main.html`. The array will simply be a list of arbitrary wikiepdia topics (e.g. monkey, canada, fiat currency, etc). Note that wikipedia titles, in the URL, are case sensitive.
+In our `MainCtrl` we're going to create an array attached to the `$scope` variable that we can access within `main.html`. The array will simply be a list of arbitrary wikiepdia topics (e.g. monkey, canada, fiat currency, etc). Note that wikipedia titles, in the URL, are case sensitive. Feel free find your own 10+ topics.
 
 ### Cheat
 ```javascript
@@ -225,7 +229,7 @@ In our `MainCtrl` we're going to create an array attached to the `$scope` variab
 ```
 
 ### Listing the topics in our `main.html`
-Next we want to list to topics in the view using `<ul>`, `<li>` and `<a>`. The `<a>`'s will make each topic clickable (eventually the user will click on the topic and be taken to the article - don't worry about the navigation right away). Try to do this on your own (hint: use `class="item"` and `ng-repeat`).
+Next we want to list to topics in the view using `<ul>`, `<li>` and `<a>`. The `<a>`'s will make each topic clickable (eventually the user will click on the topic and be taken to the article - don't worry about the navigation right away). Try to do this on your own (hint: use `class="item"` and `ng-repeat`). Refer to [Ionic CSS Docs](http://ionicframework.com/docs/components/) for documentation on the correct Ionic CSS classes to add to your `<ul>`, `<li>` and `<a>` elements.
 
 ### Cheat
 In `main.html`:
@@ -243,7 +247,7 @@ In `main.html`:
 ```
 ### Adding some functions in our `MainCtrl`
 
-Presently our list has two drawbacks: 1) the links don't go anywhere and 2) our 2 of our topics have lowercase second words. We're going to solve the first problem by creating `$scope.createLink(title)` and the second with `$scope.capitalize(title)`. `$scope.createLink(title)` will return a link like so `"world war II"` => `"#/entry/world%20war%20II"`. Try to do this on your own.
+Presently our list has two drawbacks: 1) the links don't go anywhere and 2) 2 of our topics have lowercase second words. We're going to solve the first problem by creating `$scope.createLink(title)` and the second with `$scope.capitalize(title)`. `$scope.createLink(title)` will return a link like so `"world war II"` => `"#/entry/world%20war%20II"`. Try to do this on your own.
 
 ### Cheat
 ```javascript
@@ -270,10 +274,10 @@ Note that capitalize function would have been nicer as an [AngularJS filter](htt
 
 ## Viewing the Wikipedia Story
 
-At the end of this section we want a use to be able to:
+At the end of this section we want to be able to:
 
 1. click on a story and be taken to a new page in our app
-2. That new page will fetch the story from the Wikipedia API
+2. The new page will fetch the story from the Wikipedia API
 3. Display that story on the page
 
 Clues: 1) create a new state that corresponds to the URL in the capitalize function (e.g. `/entry/:title`, 2) create a new controller (e.g. `EntryCtrl`), 3) create a template (e.g. `entry.html`) and 4) create a function in the controller that uses `$http.jsonp()` to fetch the content from Wikipedia's API endpoint and use the following URL:
@@ -283,7 +287,7 @@ https://en.wikipedia.org/w/api.php?action=query&callback=JSON_CALLBACK&prop=extr
 ```  
 To get the title from the URL, within the controller, use `$stateParams`. Try to solve this on your own before scrolling down.
 
-### Creating the state
+### Cheat - Creating the state
 
 In `app.js` we're going to add a new state right after the `app.main` state:
 
@@ -299,7 +303,7 @@ In `app.js` we're going to add a new state right after the `app.main` state:
 })
 ```
 
-### Creating the Controller, `EntryCtrl`
+### Cheat - Creating the Controller, `EntryCtrl`
 
 ```javascript
 .controller('EntryCtrl', function($scope, $stateParams, $http){
@@ -323,7 +327,7 @@ In `app.js` we're going to add a new state right after the `app.main` state:
 
 ### Creating the Template, `entry.html`
 
-First Create the template, `templates/entry.html`. We want the entry page to display the article's title and display a the article (html and all). Hint: use `<ion-nav-title>` for the title and `ng-bind-html` to display the article, which includes html.
+First Create the template, `templates/entry.html`. We want the entry page to display the article's title and display a the article (html and all). Hint: use `<ion-nav-title>` for the title and `ng-bind-html` to display the article, which includes html. For more information on [ng-bind-html](https://docs.angularjs.org/api/ng/directive/ngBindHtml).
 
 #### Cheat
 Create the template, `templates/entry.html` and include the following lines:
@@ -331,7 +335,169 @@ Create the template, `templates/entry.html` and include the following lines:
 ```html
 <ion-view>
   <ion-nav-title>{{title}}</ion-nav-title>
-  <ion-content>
+  <ion-content padding="true">
+    <div ng-bind-html="entry">
+    </div>
+  </ion-content>
+</ion-view>
+```
+
+## Adding a Favourite Button
+
+We're going to add a favourite button to each article's entry page. The button will display the heart icon by default and if the user favourites the article it will switch to a check-mark. In a real web application we'd store favourites on the server, in our application we'll just store them in a service (e.g. in-memory).
+
+steps:
+
+1. Add button to template `templates/entry.html`
+2. Add function `$scope.favourite` to  the `EntrCtrl`
+3. Call `toggleFavourite(title)` via `ng-click` on the button
+4. Create a file called `services.js` in the `js` folder and reference it in `index.html`
+5. In `services.js` create a new module `angular.module('starter.services', [])`
+6. In `app.js` make your app dependent on that module, like you did with the controller.
+7. In `services.js` define your service `.factory('favourites', function(){ /.../ });`
+8. Your factory should return a JavaScript object that has two functions: `toggleFavourite(title)` and `isFavourited(title)`. The factory should also store an object where the keys are titles and the values are true/false depending on where the article was favourited or not.
+9. Connect the service to your controller.
+10. Update the entry to use `isFavourited` and `ng-show`/`ng-hide` to hide/show the icons.
+
+
+### Mega Cheat!
+
+### Step 1
+Add button to template `templates/entry.html`
+
+```html
+<ion-view>
+  <ion-nav-title>{{title}}</ion-nav-title>
+  <ion-content padding="true">
+    <button class="button button-balanced button-block">
+      <i class="icon ion-heart"></i>
+      Favourite
+    </button>
+    <div ng-bind-html="entry">
+    </div>
+  </ion-content>
+</ion-view>
+```
+
+### Step 2
+
+Add function `$scope.favourite` to  the `EntrCtrl`
+
+```js
+$scope.toggleFavourite = function(title){
+  console.log('Favourite ' + title);
+}
+```
+
+### Step 3
+
+Call `toggleFavourite(title)` via `ng-click` on the button you created in step 1.
+
+```html
+<button class="button button-balanced button-block" ng-click="toggleFavourite(title)">
+  <i class="icon ion-heart"></i>
+  Favourite
+</button>
+```
+
+### Step 4
+Create a file called `services.js` in the `js` folder and reference it in `index.html`
+
+```html
+<!-- your app's js -->
+<script src="js/services.js"></script>
+<script src="js/controllers.js"></script>
+<script src="js/app.js"></script>
+
+```
+
+### Step 5
+
+In `services.js` create a new module `angular.module('starter.services', [])`
+
+### Step 6
+
+In `app.js` make your app dependent on that module, like you did with the controller.
+
+```javascript
+angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
+```
+
+### Step 7
+
+In `services.js` define your service `.factory('favourites', function(){ /.../ });
+
+```javascript
+angular.module('starter.services', [])
+.factory('favourites', function(){ 
+
+});
+```
+
+### Step 8
+
+Your factory should return a JavaScript object that has two functions: `toggleFavourite(title)` and `isFavourited(title)`. The factory should also store an object where the keys are titles and the values are true/false depending on where the article was favourited or not.
+
+```javascript
+angular.module('starter.services', [])
+.factory('favourites', function(){ 
+  var favourites = {};
+
+  favourites.store = {};
+
+  favourites.toggleFavourite = function(title){
+    favourites.store[title] = !favourites.store[title];
+  }
+
+  favourites.isFavourited = function(title){
+    return favourites.store[title];
+  }
+
+  return favourites;
+});
+```
+
+### Step 9
+
+Connect the service to your controller. Note that we're referencing `favourites` in the function's signature.
+
+```javascript
+.controller('EntryCtrl', function($scope, $stateParams, $http, favourites){
+  var urlStub = 'https://en.wikipedia.org/w/api.php?action=query&callback=JSON_CALLBACK&prop=extracts&format=json&exintro=&titles=';
+  var url = urlStub + encodeURIComponent($stateParams.title);
+
+  $http.jsonp(url)
+    .then(function(response){
+      var temp = response.data.query.pages;
+      var pageId = Object.keys(temp)[0];
+      var article = temp[pageId];
+
+      $scope.title = article.title;
+      $scope.entry = article.extract;
+    });
+
+  $scope.toggleFavourite = function(title){
+    console.log('Favourite ' + title);
+    favourites.toggleFavourite(title);
+  }
+
+  $scope.isFavourited = favourites.isFavourited;
+});
+```
+
+### Step 10
+
+Update the entry to use `isFavourited` and `ng-show`/`ng-hide` to hide/show the icons.
+
+```html
+<ion-view>
+  <ion-nav-title>{{title}}</ion-nav-title>
+  <ion-content padding="true">
+    <button class="button button-balanced button-block" ng-click="toggleFavourite(title)">
+      <i class="icon ion-heart" ng-hide="isFavourited(title)"></i>
+      <i class="icon ion-checkmark-round" ng-show="isFavourited(title)"></i>
+      Favourite
+    </button>
     <div ng-bind-html="entry">
     </div>
   </ion-content>
